@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { AppHeader } from "./components/AppHeader";
 import { BoardView } from "./components/BoardView";
 import { GameStatus } from "./components/GameStatus";
 import { TokenTray } from "./components/TokenTray";
@@ -8,7 +9,8 @@ import "./styles/app.css";
 import "./styles/celebration.css";
 
 export const App = () => {
-  const { state, setState, reset } = useStoredGame();
+  const { state, setState, reset, undo, redo, canUndo, canRedo } =
+    useStoredGame();
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
@@ -16,14 +18,6 @@ export const App = () => {
     y: number;
   } | null>(null);
   const [snapColumn, setSnapColumn] = useState<number | null>(null);
-  const status = useMemo(
-    () => ({
-      winner: state.winner,
-      isDraw: state.isDraw,
-      currentPlayer: state.currentPlayer
-    }),
-    [state]
-  );
   const handleDrop = useCallback(
     (column: number) => {
       setDragging(false);
@@ -33,7 +27,6 @@ export const App = () => {
     },
     [setState]
   );
-
   const updateDragPosition = useCallback(
     (point: { x: number; y: number }) => {
       const board = boardRef.current;
@@ -86,14 +79,12 @@ export const App = () => {
     },
     [updateDragPosition]
   );
-
   const handleTouchMove = useCallback(
     (point: { x: number; y: number }) => {
       updateDragPosition(point);
     },
     [updateDragPosition]
   );
-
   const handleTouchEnd = useCallback(() => {
     if (snapColumn !== null) {
       handleDrop(snapColumn);
@@ -103,7 +94,6 @@ export const App = () => {
     setDragPosition(null);
     setSnapColumn(null);
   }, [handleDrop, snapColumn]);
-
   const handleNewGame = () => {
     if (isInProgress(state)) {
       const shouldReset = window.confirm(
@@ -116,13 +106,18 @@ export const App = () => {
 
   return (
     <div className="app">
-      <header className="app__header">
-        <h1>Connect Four</h1>
-        <button className="app__button" onClick={handleNewGame}>
-          New Game
-        </button>
-      </header>
-      <GameStatus {...status} />
+      <AppHeader
+        onNewGame={handleNewGame}
+        onUndo={undo}
+        onRedo={redo}
+        canUndo={canUndo}
+        canRedo={canRedo}
+      />
+      <GameStatus
+        winner={state.winner}
+        isDraw={state.isDraw}
+        currentPlayer={state.currentPlayer}
+      />
       {!state.winner && (
         <TokenTray
           player={state.currentPlayer}
