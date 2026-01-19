@@ -29,6 +29,13 @@ body {
   gap: 1rem;
 }
 
+.app__controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .app__button {
   background: #1f6feb;
   border: none;
@@ -36,6 +43,16 @@ body {
   padding: 0.75rem 1.5rem;
   border-radius: 999px;
   font-size: 1rem;
+}
+
+.app__button--secondary {
+  background: #e6edf8;
+  color: #1f4ca3;
+}
+
+.app__button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .status {
