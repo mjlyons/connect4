@@ -137,14 +137,16 @@ export const App = () => {
           aria-hidden="true"
         />
       ) : null}
-      <BoardView
-        board={state.board}
-        currentPlayer={state.currentPlayer}
-        dragging={dragging}
-        lastMove={state.lastMove}
-        boardRef={boardRef}
-        onDropColumn={handleDrop}
-      />
+      <div className="board-frame">
+        <BoardView
+          board={state.board}
+          currentPlayer={state.currentPlayer}
+          dragging={dragging}
+          lastMove={state.lastMove}
+          boardRef={boardRef}
+          onDropColumn={handleDrop}
+        />
+      </div>
     </div>
   );
 };
