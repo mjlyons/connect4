@@ -46,8 +46,7 @@ export const App = () => {
       const snapZoneHeight = 80;
       const tokenRadius = 30;
       const snapGap = 8;
-      const isWithinX =
-        point.x >= boardRect.left && point.x <= boardRect.right;
+      const isWithinX = point.x >= boardRect.left && point.x <= boardRect.right;
       const isWithinY =
         point.y >= boardRect.top - snapZoneHeight &&
         point.y <= boardRect.bottom;
@@ -80,14 +79,20 @@ export const App = () => {
     },
     [state.board]
   );
-  const handleTouchStart = useCallback((point: { x: number; y: number }) => {
-    setDragging(true);
-    updateDragPosition(point);
-  }, [updateDragPosition]);
+  const handleTouchStart = useCallback(
+    (point: { x: number; y: number }) => {
+      setDragging(true);
+      updateDragPosition(point);
+    },
+    [updateDragPosition]
+  );
 
-  const handleTouchMove = useCallback((point: { x: number; y: number }) => {
-    updateDragPosition(point);
-  }, [updateDragPosition]);
+  const handleTouchMove = useCallback(
+    (point: { x: number; y: number }) => {
+      updateDragPosition(point);
+    },
+    [updateDragPosition]
+  );
 
   const handleTouchEnd = useCallback(() => {
     if (snapColumn !== null) {
