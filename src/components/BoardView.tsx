@@ -30,17 +30,8 @@ export const BoardView = ({
         <div
           key={`column-${colIndex}`}
           className="board__column"
-          role="button"
-          tabIndex={0}
-          aria-label={`Drop ${currentPlayer} piece in column ${colIndex + 1}`}
+          role="presentation"
           data-testid={`column-${colIndex}`}
-          onClick={() => onDropColumn(colIndex)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              onDropColumn(colIndex);
-            }
-          }}
           onDragOver={(event) => {
             if (dragging) event.preventDefault();
           }}
