@@ -1,4 +1,4 @@
-import { Page, TestInfo, expect } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
 
 export const dropInColumn = async (page: Page, column: number) => {
   await page.getByTestId(`column-${column}`).click();
@@ -17,12 +17,12 @@ export const touchDropInColumn = async (page: Page, column: number) => {
   const startX = tokenBox.x + tokenBox.width / 2;
   const startY = tokenBox.y + tokenBox.height / 2;
   const endX = columnBox.x + columnBox.width / 2;
-  const endY = boardBox.y - 20;
+  const endY = boardBox.y + 10;
   const identifier = 1;
   await token.dispatchEvent("touchstart", {
     touches: [{ identifier, clientX: startX, clientY: startY }]
   });
-  await page.dispatchEvent("body", "touchmove", {
+  await token.dispatchEvent("touchmove", {
     touches: [{ identifier, clientX: endX, clientY: endY }]
   });
   await token.dispatchEvent("touchend", {
@@ -30,31 +30,15 @@ export const touchDropInColumn = async (page: Page, column: number) => {
   });
 };
 
-export const playMoves = async (
-  page: Page,
-  testInfo: TestInfo,
-  moves: number[]
-) => {
-  for (const [index, column] of moves.entries()) {
+export const playMoves = async (page: Page, moves: number[]) => {
+  for (const column of moves) {
     await dropInColumn(page, column);
-    await page.screenshot({
-      path: testInfo.outputPath(`step-${index + 1}.png`),
-      fullPage: true
-    });
   }
 };
 
-export const playTouchMoves = async (
-  page: Page,
-  testInfo: TestInfo,
-  moves: number[]
-) => {
-  for (const [index, column] of moves.entries()) {
+export const playTouchMoves = async (page: Page, moves: number[]) => {
+  for (const column of moves) {
     await touchDropInColumn(page, column);
-    await page.screenshot({
-      path: testInfo.outputPath(`touch-step-${index + 1}.png`),
-      fullPage: true
-    });
   }
 };
 
