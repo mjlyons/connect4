@@ -4,15 +4,23 @@ import { Player } from "../model/board";
 type TokenTrayProps = {
   player: Player;
   setDragging: (dragging: boolean) => void;
-  onTouchDrop: (point: { x: number; y: number }) => void;
+  hideToken: boolean;
+  onTouchStart: (point: { x: number; y: number }) => void;
+  onTouchMove: (point: { x: number; y: number }) => void;
+  onTouchEnd: (point: { x: number; y: number }) => void;
 };
 
 export const TokenTray = ({
   player,
   setDragging,
-  onTouchDrop
+  hideToken,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd
 }: TokenTrayProps) => {
-  const className = `tray__token tray__token--${player.toLowerCase()}`;
+  const className = `tray__token tray__token--${player.toLowerCase()}${
+    hideToken ? " tray__token--hidden" : ""
+  }`;
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") {
       event.preventDefault();
@@ -24,10 +32,24 @@ export const TokenTray = ({
     setDragging(false);
   };
 
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    event.preventDefault();
+    onTouchStart({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    event.preventDefault();
+    onTouchMove({ x: touch.clientX, y: touch.clientY });
+  };
+
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     const touch = event.changedTouches[0];
     if (touch) {
-      onTouchDrop({ x: touch.clientX, y: touch.clientY });
+      onTouchEnd({ x: touch.clientX, y: touch.clientY });
     } else {
       setDragging(false);
     }
@@ -45,7 +67,8 @@ export const TokenTray = ({
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        onTouchStart={() => setDragging(true)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handlePointerUp}
       />

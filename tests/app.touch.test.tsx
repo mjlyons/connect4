@@ -9,8 +9,12 @@ describe("App touch play", () => {
 
     const token = screen.getByRole("img", { name: /red piece/i });
     act(() => {
-      fireEvent.touchStart(token);
+      fireEvent.touchStart(token, {
+        touches: [{ clientX: 12, clientY: 14 }]
+      });
     });
+
+    expect(container.querySelector(".dragging-token")).not.toBeNull();
 
     const column = screen.getByTestId("column-0");
     let cleanupElementFromPoint = () => {};
@@ -41,6 +45,7 @@ describe("App touch play", () => {
     });
 
     expect(container.querySelectorAll(".cell--red")).toHaveLength(1);
+    expect(container.querySelector(".dragging-token")).toBeNull();
     cleanupElementFromPoint();
   });
 });
