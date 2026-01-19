@@ -1,12 +1,17 @@
-import type { PointerEvent } from "react";
+import type { PointerEvent, TouchEvent } from "react";
 import { Player } from "../model/board";
 
 type TokenTrayProps = {
   player: Player;
   setDragging: (dragging: boolean) => void;
+  onTouchDrop: (point: { x: number; y: number }) => void;
 };
 
-export const TokenTray = ({ player, setDragging }: TokenTrayProps) => {
+export const TokenTray = ({
+  player,
+  setDragging,
+  onTouchDrop
+}: TokenTrayProps) => {
   const className = `tray__token tray__token--${player.toLowerCase()}`;
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") {
@@ -17,6 +22,15 @@ export const TokenTray = ({ player, setDragging }: TokenTrayProps) => {
 
   const handlePointerUp = () => {
     setDragging(false);
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.changedTouches[0];
+    if (touch) {
+      onTouchDrop({ x: touch.clientX, y: touch.clientY });
+    } else {
+      setDragging(false);
+    }
   };
   return (
     <div className="tray" aria-label="Current player token">
@@ -32,7 +46,8 @@ export const TokenTray = ({ player, setDragging }: TokenTrayProps) => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onTouchStart={() => setDragging(true)}
-        onTouchEnd={handlePointerUp}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handlePointerUp}
       />
     </div>
   );

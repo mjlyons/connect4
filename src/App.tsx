@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { BoardView } from "./components/BoardView";
 import { GameStatus } from "./components/GameStatus";
 import { TokenTray } from "./components/TokenTray";
@@ -18,10 +18,28 @@ export const App = () => {
     [state]
   );
 
-  const handleDrop = (column: number) => {
-    setDragging(false);
-    setState((prev) => applyMove(prev, column));
-  };
+  const handleDrop = useCallback(
+    (column: number) => {
+      setDragging(false);
+      setState((prev) => applyMove(prev, column));
+    },
+    [setState]
+  );
+
+  const handleTouchDrop = useCallback(
+    (point: { x: number; y: number }) => {
+      const target = document.elementFromPoint(point.x, point.y);
+      const column = target?.closest<HTMLElement>('[data-testid^="column-"]');
+      const testId = column?.dataset.testid;
+      const match = testId?.match(/column-(\d+)/);
+      if (match) {
+        handleDrop(Number(match[1]));
+        return;
+      }
+      setDragging(false);
+    },
+    [handleDrop]
+  );
 
   const handleNewGame = () => {
     if (isInProgress(state)) {
@@ -42,7 +60,11 @@ export const App = () => {
         </button>
       </header>
       <GameStatus {...status} />
-      <TokenTray player={state.currentPlayer} setDragging={setDragging} />
+      <TokenTray
+        player={state.currentPlayer}
+        setDragging={setDragging}
+        onTouchDrop={handleTouchDrop}
+      />
       <BoardView
         board={state.board}
         currentPlayer={state.currentPlayer}

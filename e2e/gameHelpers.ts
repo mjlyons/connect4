@@ -6,10 +6,24 @@ export const dropInColumn = async (page: Page, column: number) => {
 
 export const touchDropInColumn = async (page: Page, column: number) => {
   const token = page.getByRole("img", { name: /piece/i });
-  await token.dispatchEvent("pointerdown", { pointerType: "touch" });
-  await page
-    .getByTestId(`column-${column}`)
-    .dispatchEvent("pointerup", { pointerType: "touch" });
+  const tokenBox = await token.boundingBox();
+  const columnBox = await page.getByTestId(`column-${column}`).boundingBox();
+  if (!tokenBox || !columnBox) {
+    throw new Error("Missing bounding boxes for touch drop");
+  }
+  const startX = tokenBox.x + tokenBox.width / 2;
+  const startY = tokenBox.y + tokenBox.height / 2;
+  const endX = columnBox.x + columnBox.width / 2;
+  const endY = columnBox.y + columnBox.height / 2;
+  await token.dispatchEvent("touchstart", {
+    touches: [{ clientX: startX, clientY: startY }]
+  });
+  await page.dispatchEvent("body", "touchmove", {
+    touches: [{ clientX: endX, clientY: endY }]
+  });
+  await token.dispatchEvent("touchend", {
+    changedTouches: [{ clientX: endX, clientY: endY }]
+  });
 };
 
 export const playMoves = async (

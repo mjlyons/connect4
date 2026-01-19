@@ -1,4 +1,4 @@
-import type { PointerEvent, TouchEvent } from "react";
+import type { PointerEvent } from "react";
 import { Board, Player } from "../model/board";
 import { CellView } from "./CellView";
 
@@ -25,14 +25,6 @@ export const BoardView = ({
     onDropColumn(colIndex);
   };
 
-  const handleTouchDrop = (
-    event: TouchEvent<HTMLDivElement>,
-    colIndex: number
-  ) => {
-    if (!dragging) return;
-    event.preventDefault();
-    onDropColumn(colIndex);
-  };
   return (
     <div className="board" role="grid" aria-label="Connect Four board">
       {board[0].map((_, colIndex) => (
@@ -59,7 +51,6 @@ export const BoardView = ({
           }}
           onPointerUp={(event) => handlePointerDrop(event, colIndex)}
           onPointerCancel={(event) => handlePointerDrop(event, colIndex)}
-          onTouchEnd={(event) => handleTouchDrop(event, colIndex)}
         >
           {board.map((row, rowIndex) => (
             <CellView

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { act } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { App } from "../src/App";
 
 describe("App touch play", () => {
@@ -13,10 +13,34 @@ describe("App touch play", () => {
     });
 
     const column = screen.getByTestId("column-0");
+    let cleanupElementFromPoint = () => {};
+    if (document.elementFromPoint) {
+      const elementFromPoint = vi
+        .spyOn(document, "elementFromPoint")
+        .mockReturnValue(column);
+      cleanupElementFromPoint = () => elementFromPoint.mockRestore();
+    } else {
+      Object.defineProperty(document, "elementFromPoint", {
+        value: () => column,
+        configurable: true
+      });
+      cleanupElementFromPoint = () => {
+        delete (
+          document as Document & {
+            elementFromPoint?:
+              | ((x: number, y: number) => Element | null)
+              | null;
+          }
+        ).elementFromPoint;
+      };
+    }
     act(() => {
-      fireEvent.touchEnd(column);
+      fireEvent.touchEnd(token, {
+        changedTouches: [{ clientX: 10, clientY: 10 }]
+      });
     });
 
     expect(container.querySelectorAll(".cell--red")).toHaveLength(1);
+    cleanupElementFromPoint();
   });
 });
