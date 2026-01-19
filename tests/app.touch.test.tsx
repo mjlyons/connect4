@@ -17,27 +17,9 @@ describe("App touch play", () => {
     expect(container.querySelector(".dragging-token")).not.toBeNull();
 
     const column = screen.getByTestId("column-0");
-    let cleanupElementFromPoint = () => {};
-    if (document.elementFromPoint) {
-      const elementFromPoint = vi
-        .spyOn(document, "elementFromPoint")
-        .mockReturnValue(column);
-      cleanupElementFromPoint = () => elementFromPoint.mockRestore();
-    } else {
-      Object.defineProperty(document, "elementFromPoint", {
-        value: () => column,
-        configurable: true
-      });
-      cleanupElementFromPoint = () => {
-        delete (
-          document as Document & {
-            elementFromPoint?:
-              | ((x: number, y: number) => Element | null)
-              | null;
-          }
-        ).elementFromPoint;
-      };
-    }
+    const elementFromPoint = vi
+      .spyOn(document, "elementFromPoint")
+      .mockReturnValue(column);
     act(() => {
       fireEvent.touchEnd(token, {
         changedTouches: [{ clientX: 10, clientY: 10 }]
@@ -46,6 +28,6 @@ describe("App touch play", () => {
 
     expect(container.querySelectorAll(".cell--red")).toHaveLength(1);
     expect(container.querySelector(".dragging-token")).toBeNull();
-    cleanupElementFromPoint();
+    elementFromPoint.mockRestore();
   });
 });
