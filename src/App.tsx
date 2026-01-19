@@ -5,6 +5,7 @@ import { TokenTray } from "./components/TokenTray";
 import { useStoredGame } from "./hooks/useStoredGame";
 import { applyMove, isInProgress } from "./model/game";
 import "./styles/app.css";
+import "./styles/celebration.css";
 
 export const App = () => {
   const { state, setState, reset } = useStoredGame();
@@ -41,7 +42,9 @@ export const App = () => {
         </button>
       </header>
       <GameStatus {...status} />
-      <TokenTray player={state.currentPlayer} setDragging={setDragging} />
+      {!state.winner && (
+        <TokenTray player={state.currentPlayer} setDragging={setDragging} />
+      )}
       <BoardView
         board={state.board}
         currentPlayer={state.currentPlayer}
