@@ -31,6 +31,10 @@ export const BoardView = ({
           className="board__column"
           role="presentation"
           data-testid={`column-${colIndex}`}
+          onClick={() => {
+            if (dragging) return;
+            onDropColumn(colIndex);
+          }}
           onDragOver={(event) => {
             if (dragging) event.preventDefault();
           }}
