@@ -17,12 +17,12 @@ export const touchDropInColumn = async (page: Page, column: number) => {
   const startX = tokenBox.x + tokenBox.width / 2;
   const startY = tokenBox.y + tokenBox.height / 2;
   const endX = columnBox.x + columnBox.width / 2;
-  const endY = boardBox.y - 20;
+  const endY = boardBox.y + 10;
   const identifier = 1;
   await token.dispatchEvent("touchstart", {
     touches: [{ identifier, clientX: startX, clientY: startY }]
   });
-  await page.dispatchEvent("body", "touchmove", {
+  await token.dispatchEvent("touchmove", {
     touches: [{ identifier, clientX: endX, clientY: endY }]
   });
   await token.dispatchEvent("touchend", {
