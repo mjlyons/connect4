@@ -104,6 +104,7 @@ export const App = () => {
         board={state.board}
         currentPlayer={state.currentPlayer}
         dragging={dragging}
+        lastMove={state.lastMove}
         onDropColumn={handleDrop}
       />
     </div>

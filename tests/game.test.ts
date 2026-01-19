@@ -15,6 +15,11 @@ describe("game model", () => {
     expect(game.currentPlayer).toBe("Yellow");
   });
 
+  it("records the last move position", () => {
+    const game = applyMove(createGame(), 2);
+    expect(game.lastMove).toEqual({ row: 6, column: 2 });
+  });
+
   it("blocks moves after a win", () => {
     const winningGame = dropMoves([0, 0, 1, 1, 2, 2, 3]);
     expect(winningGame.winner).toBe("Red");
