@@ -19,7 +19,7 @@ export const playMoves = async (
 };
 
 export const expectStatus = async (page: Page, text: string) => {
-  await expect(page.getByTestId("game-status")).toHaveText(text);
+  await expect(page.getByTestId("game-status-message")).toHaveText(text);
 };
 
 export const startNewGame = async (page: Page) => {

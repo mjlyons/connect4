@@ -23,7 +23,9 @@ export const GameStatus = ({
       className={`status${isWinner ? " status--win" : ""}`}
       data-testid="game-status"
     >
-      <span className="status__message">{message}</span>
+      <span className="status__message" data-testid="game-status-message">
+        {message}
+      </span>
       {isWinner && (
         <div className="status__confetti" aria-hidden="true">
           {celebrationEmojis.map((emoji, index) => (
