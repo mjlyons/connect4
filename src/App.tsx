@@ -5,6 +5,7 @@ import { TokenTray } from "./components/TokenTray";
 import { useStoredGame } from "./hooks/useStoredGame";
 import { applyMove, isInProgress } from "./model/game";
 import "./styles/app.css";
+import "./styles/celebration.css";
 
 export const App = () => {
   const { state, setState, reset } = useStoredGame();
@@ -82,14 +83,16 @@ export const App = () => {
         </button>
       </header>
       <GameStatus {...status} />
-      <TokenTray
-        player={state.currentPlayer}
-        setDragging={setDragging}
-        hideToken={Boolean(dragPosition)}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      />
+      {!state.winner && (
+        <TokenTray
+          player={state.currentPlayer}
+          setDragging={setDragging}
+          hideToken={Boolean(dragPosition)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        />
+      )}
       {dragPosition ? (
         <div
           className={`dragging-token dragging-token--${state.currentPlayer.toLowerCase()}`}
