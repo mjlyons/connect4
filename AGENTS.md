@@ -17,6 +17,8 @@
 - Implement unit tests for all relevant functionality.
 - Implement Playwright end-to-end tests covering 10 different games.
 - Always run all tests after making changes to make sure there are no errors.
+- Always run `npm run typecheck` to catch TypeScript errors before shipping.
+- Keep Vitest DOM polyfills up to date so unit tests match CI (e.g., `elementFromPoint`).
 - Capture screenshots for each Playwright move step for review.
 - Maintain ESLint and Prettier configurations for linting and formatting.
 - Keep GitHub Actions configured to run tests, linting, and formatting checks on

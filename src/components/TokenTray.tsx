@@ -1,12 +1,59 @@
+import type { PointerEvent, TouchEvent } from "react";
 import { Player } from "../model/board";
 
 type TokenTrayProps = {
   player: Player;
   setDragging: (dragging: boolean) => void;
+  hideToken: boolean;
+  onTouchStart: (point: { x: number; y: number }) => void;
+  onTouchMove: (point: { x: number; y: number }) => void;
+  onTouchEnd: (point: { x: number; y: number }) => void;
 };
 
-export const TokenTray = ({ player, setDragging }: TokenTrayProps) => {
-  const className = `tray__token tray__token--${player.toLowerCase()}`;
+export const TokenTray = ({
+  player,
+  setDragging,
+  hideToken,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd
+}: TokenTrayProps) => {
+  const className = `tray__token tray__token--${player.toLowerCase()}${
+    hideToken ? " tray__token--hidden" : ""
+  }`;
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") {
+      event.preventDefault();
+    }
+    setDragging(true);
+  };
+
+  const handlePointerUp = () => {
+    setDragging(false);
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    event.preventDefault();
+    onTouchStart({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    event.preventDefault();
+    onTouchMove({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.changedTouches[0];
+    if (touch) {
+      onTouchEnd({ x: touch.clientX, y: touch.clientY });
+    } else {
+      setDragging(false);
+    }
+  };
   return (
     <div className="tray" aria-label="Current player token">
       <span className="tray__label">Drag a {player} piece</span>
@@ -17,6 +64,13 @@ export const TokenTray = ({ player, setDragging }: TokenTrayProps) => {
         aria-label={`${player} piece`}
         onDragStart={() => setDragging(true)}
         onDragEnd={() => setDragging(false)}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handlePointerUp}
       />
     </div>
   );
