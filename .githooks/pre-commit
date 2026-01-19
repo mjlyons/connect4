@@ -1,3 +1,5 @@
 #!/bin/sh
 
-npm run format
+set -e
+
+npm run format:check
