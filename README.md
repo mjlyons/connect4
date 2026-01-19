@@ -1,4 +1,4 @@
-# Connect Four for iPad
+# Connect Four
 
 A mobile-friendly Connect Four web app built with TypeScript, React, and Vite. The board is a 7x7 grid with drag-and-drop support designed for iPad Safari. Game state is persisted in localStorage so you can refresh without losing progress.
 
