@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-- Build a Connect Four-style game for iPad Safari as a web app.
+- Build a Connect Four-style game Safari as a web app.
 - Use TypeScript, React, and Vite.
 - Maintain a clear board model data structure and render the UI based on that
   model.
