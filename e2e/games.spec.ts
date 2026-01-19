@@ -19,7 +19,7 @@ test.describe("connect four games", () => {
     },
     {
       name: "red diagonal win",
-      moves: [0, 1, 1, 2, 2, 3, 2, 3, 3, 4, 3],
+      moves: [0, 0, 0, 1, 0, 0, 3, 1, 1, 2, 2],
       result: "Red wins!"
     },
     {
