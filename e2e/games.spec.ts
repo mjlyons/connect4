@@ -65,15 +65,15 @@ test.describe("connect four games", () => {
   ];
 
   for (const game of games) {
-    test(game.name, async ({ page }, testInfo) => {
-      await playMoves(page, testInfo, game.moves);
+    test(game.name, async ({ page }) => {
+      await playMoves(page, game.moves);
       await expectStatus(page, game.result);
       await startNewGame(page);
     });
   }
 
-  test("touch interactions drop a token", async ({ page }, testInfo) => {
-    await playTouchMoves(page, testInfo, [0]);
+  test("touch interactions drop a token", async ({ page }) => {
+    await playTouchMoves(page, [0]);
     await expectStatus(page, "Yellow's turn");
     await startNewGame(page);
   });
