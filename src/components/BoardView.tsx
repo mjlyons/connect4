@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import { Board, Player } from "../model/board";
+import type { Board, Player } from "../model/board";
 import { CellView } from "./CellView";
 
 type BoardViewProps = {
@@ -13,7 +13,6 @@ type BoardViewProps = {
 
 export const BoardView = ({
   board,
-  currentPlayer,
   dragging,
   lastMove,
   boardRef,
@@ -30,16 +29,11 @@ export const BoardView = ({
         <div
           key={`column-${colIndex}`}
           className="board__column"
-          role="button"
-          tabIndex={0}
-          aria-label={`Drop ${currentPlayer} piece in column ${colIndex + 1}`}
+          role="presentation"
           data-testid={`column-${colIndex}`}
-          onClick={() => onDropColumn(colIndex)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              onDropColumn(colIndex);
-            }
+          onClick={() => {
+            if (dragging) return;
+            onDropColumn(colIndex);
           }}
           onDragOver={(event) => {
             if (dragging) event.preventDefault();
