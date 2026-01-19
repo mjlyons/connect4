@@ -1,4 +1,4 @@
-import type { PointerEvent } from "react";
+import type { RefObject } from "react";
 import { Board, Player } from "../model/board";
 import { CellView } from "./CellView";
 
@@ -6,6 +6,8 @@ type BoardViewProps = {
   board: Board;
   currentPlayer: Player;
   dragging: boolean;
+  lastMove: { row: number; column: number } | null;
+  boardRef: RefObject<HTMLDivElement>;
   onDropColumn: (column: number) => void;
 };
 
@@ -13,20 +15,17 @@ export const BoardView = ({
   board,
   currentPlayer,
   dragging,
+  lastMove,
+  boardRef,
   onDropColumn
 }: BoardViewProps) => {
-  const handlePointerDrop = (
-    event: PointerEvent<HTMLDivElement>,
-    colIndex: number
-  ) => {
-    if (!dragging) return;
-    if (event.pointerType !== "touch") return;
-    event.preventDefault();
-    onDropColumn(colIndex);
-  };
-
   return (
-    <div className="board" role="grid" aria-label="Connect Four board">
+    <div
+      ref={boardRef}
+      className="board"
+      role="grid"
+      aria-label="Connect Four board"
+    >
       {board[0].map((_, colIndex) => (
         <div
           key={`column-${colIndex}`}
@@ -49,13 +48,15 @@ export const BoardView = ({
             event.preventDefault();
             onDropColumn(colIndex);
           }}
-          onPointerUp={(event) => handlePointerDrop(event, colIndex)}
-          onPointerCancel={(event) => handlePointerDrop(event, colIndex)}
         >
           {board.map((row, rowIndex) => (
             <CellView
               key={`cell-${rowIndex}-${colIndex}`}
               value={row[colIndex]}
+              animate={
+                lastMove?.row === rowIndex && lastMove.column === colIndex
+              }
+              dropRows={rowIndex + 1}
             />
           ))}
         </div>

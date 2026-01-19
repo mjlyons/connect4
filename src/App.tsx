@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BoardView } from "./components/BoardView";
 import { GameStatus } from "./components/GameStatus";
 import { TokenTray } from "./components/TokenTray";
@@ -9,11 +9,13 @@ import "./styles/celebration.css";
 
 export const App = () => {
   const { state, setState, reset } = useStoredGame();
+  const boardRef = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
+  const [snapColumn, setSnapColumn] = useState<number | null>(null);
   const status = useMemo(
     () => ({
       winner: state.winner,
@@ -22,47 +24,85 @@ export const App = () => {
     }),
     [state]
   );
-
   const handleDrop = useCallback(
     (column: number) => {
       setDragging(false);
       setDragPosition(null);
+      setSnapColumn(null);
       setState((prev) => applyMove(prev, column));
     },
     [setState]
   );
 
-  const handleTouchDrop = useCallback(
+  const updateDragPosition = useCallback(
     (point: { x: number; y: number }) => {
-      const target = document.elementFromPoint(point.x, point.y);
-      const column = target?.closest<HTMLElement>('[data-testid^="column-"]');
-      const testId = column?.dataset.testid;
-      const match = testId?.match(/column-(\d+)/);
-      if (match) {
-        handleDrop(Number(match[1]));
+      const board = boardRef.current;
+      if (!board) {
+        setSnapColumn(null);
+        setDragPosition(point);
         return;
       }
-      setDragging(false);
-      setDragPosition(null);
+      const boardRect = board.getBoundingClientRect();
+      const snapZoneHeight = 80;
+      const tokenRadius = 30;
+      const snapGap = 8;
+      const isWithinX = point.x >= boardRect.left && point.x <= boardRect.right;
+      const isWithinY =
+        point.y >= boardRect.top - snapZoneHeight &&
+        point.y <= boardRect.bottom;
+      if (isWithinX && isWithinY) {
+        const columns = Array.from(
+          board.querySelectorAll<HTMLElement>('[data-testid^="column-"]')
+        );
+        const target = columns.find((column) => {
+          const rect = column.getBoundingClientRect();
+          return point.x >= rect.left && point.x <= rect.right;
+        });
+        const testId = target?.dataset.testid;
+        const match = testId?.match(/column-(\d+)/);
+        if (target && match) {
+          const columnIndex = Number(match[1]);
+          const canDrop = !state.board[0][columnIndex];
+          if (canDrop) {
+            const rect = target.getBoundingClientRect();
+            setSnapColumn(columnIndex);
+            setDragPosition({
+              x: rect.left + rect.width / 2,
+              y: boardRect.top - tokenRadius - snapGap
+            });
+            return;
+          }
+        }
+      }
+      setSnapColumn(null);
+      setDragPosition(point);
     },
-    [handleDrop]
+    [state.board]
   );
-
-  const handleTouchStart = useCallback((point: { x: number; y: number }) => {
-    setDragging(true);
-    setDragPosition(point);
-  }, []);
-
-  const handleTouchMove = useCallback((point: { x: number; y: number }) => {
-    setDragPosition(point);
-  }, []);
-
-  const handleTouchEnd = useCallback(
+  const handleTouchStart = useCallback(
     (point: { x: number; y: number }) => {
-      handleTouchDrop(point);
+      setDragging(true);
+      updateDragPosition(point);
     },
-    [handleTouchDrop]
+    [updateDragPosition]
   );
+
+  const handleTouchMove = useCallback(
+    (point: { x: number; y: number }) => {
+      updateDragPosition(point);
+    },
+    [updateDragPosition]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    if (snapColumn !== null) {
+      handleDrop(snapColumn);
+      return;
+    }
+    setDragging(false);
+    setDragPosition(null);
+    setSnapColumn(null);
+  }, [handleDrop, snapColumn]);
 
   const handleNewGame = () => {
     if (isInProgress(state)) {
@@ -95,7 +135,9 @@ export const App = () => {
       )}
       {dragPosition ? (
         <div
-          className={`dragging-token dragging-token--${state.currentPlayer.toLowerCase()}`}
+          className={`dragging-token dragging-token--${state.currentPlayer.toLowerCase()}${
+            snapColumn !== null ? " dragging-token--snap" : ""
+          }`}
           style={{ left: dragPosition.x, top: dragPosition.y }}
           aria-hidden="true"
         />
@@ -104,6 +146,8 @@ export const App = () => {
         board={state.board}
         currentPlayer={state.currentPlayer}
         dragging={dragging}
+        lastMove={state.lastMove}
+        boardRef={boardRef}
         onDropColumn={handleDrop}
       />
     </div>

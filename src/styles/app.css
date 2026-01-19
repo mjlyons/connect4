@@ -92,6 +92,10 @@ body {
   background: #ffd93d;
 }
 
+.dragging-token--snap {
+  animation: jiggle 0.45s ease-in-out infinite;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(7, minmax(42px, 1fr));
@@ -118,12 +122,39 @@ body {
   border: 3px solid rgba(0, 0, 0, 0.2);
 }
 
+.cell--drop {
+  animation: drop 0.35s ease-in;
+  will-change: transform;
+}
+
 .cell--red {
   background: radial-gradient(circle at 30% 30%, #ffb3b3, #ff3b3b);
 }
 
 .cell--yellow {
   background: radial-gradient(circle at 30% 30%, #fff4b3, #ffc107);
+}
+
+@keyframes drop {
+  from {
+    transform: translateY(calc(var(--drop-rows, 1) * -120%));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes jiggle {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-50%, -54%) rotate(-3deg);
+  }
+  75% {
+    transform: translate(-50%, -46%) rotate(3deg);
+  }
 }
 
 @media (max-width: 720px) {

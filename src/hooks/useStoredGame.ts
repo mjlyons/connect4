@@ -9,7 +9,7 @@ const loadStoredGame = (): GameState => {
   try {
     const parsed = JSON.parse(raw) as GameState;
     if (!parsed.board || !parsed.currentPlayer) return createGame();
-    return parsed;
+    return { ...createGame(), ...parsed, lastMove: parsed.lastMove ?? null };
   } catch {
     return createGame();
   }
