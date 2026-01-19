@@ -8,13 +8,16 @@ export const touchDropInColumn = async (page: Page, column: number) => {
   const token = page.getByRole("img", { name: /piece/i });
   const tokenBox = await token.boundingBox();
   const columnBox = await page.getByTestId(`column-${column}`).boundingBox();
-  if (!tokenBox || !columnBox) {
+  const boardBox = await page
+    .getByRole("grid", { name: /connect four board/i })
+    .boundingBox();
+  if (!tokenBox || !columnBox || !boardBox) {
     throw new Error("Missing bounding boxes for touch drop");
   }
   const startX = tokenBox.x + tokenBox.width / 2;
   const startY = tokenBox.y + tokenBox.height / 2;
   const endX = columnBox.x + columnBox.width / 2;
-  const endY = columnBox.y + columnBox.height / 2;
+  const endY = boardBox.y - 20;
   const identifier = 1;
   await token.dispatchEvent("touchstart", {
     touches: [{ identifier, clientX: startX, clientY: startY }]

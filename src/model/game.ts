@@ -13,13 +13,15 @@ export type GameState = {
   currentPlayer: Player;
   winner: Player | null;
   isDraw: boolean;
+  lastMove: { row: number; column: number } | null;
 };
 
 export const createGame = (): GameState => ({
   board: createBoard(),
   currentPlayer: "Red",
   winner: null,
-  isDraw: false
+  isDraw: false,
+  lastMove: null
 });
 
 export const applyMove = (state: GameState, column: number): GameState => {
@@ -32,7 +34,8 @@ export const applyMove = (state: GameState, column: number): GameState => {
     board: result.board,
     currentPlayer: state.currentPlayer === "Red" ? "Yellow" : "Red",
     winner,
-    isDraw
+    isDraw,
+    lastMove: { row: result.row, column }
   };
 };
 

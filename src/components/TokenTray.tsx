@@ -7,7 +7,7 @@ type TokenTrayProps = {
   hideToken: boolean;
   onTouchStart: (point: { x: number; y: number }) => void;
   onTouchMove: (point: { x: number; y: number }) => void;
-  onTouchEnd: (point: { x: number; y: number }) => void;
+  onTouchEnd: () => void;
 };
 
 export const TokenTray = ({
@@ -47,9 +47,8 @@ export const TokenTray = ({
   };
 
   const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
-    const touch = event.changedTouches[0];
-    if (touch) {
-      onTouchEnd({ x: touch.clientX, y: touch.clientY });
+    if (event.changedTouches[0]) {
+      onTouchEnd();
     } else {
       setDragging(false);
     }
