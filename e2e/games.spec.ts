@@ -1,5 +1,10 @@
 import { test } from "@playwright/test";
-import { expectStatus, playMoves, startNewGame } from "./gameHelpers";
+import {
+  expectStatus,
+  playMoves,
+  playTouchMoves,
+  startNewGame
+} from "./gameHelpers";
 
 test.describe("connect four games", () => {
   test.beforeEach(async ({ page }) => {
@@ -66,4 +71,10 @@ test.describe("connect four games", () => {
       await startNewGame(page);
     });
   }
+
+  test("touch interactions drop a token", async ({ page }, testInfo) => {
+    await playTouchMoves(page, testInfo, [0]);
+    await expectStatus(page, "Yellow's turn");
+    await startNewGame(page);
+  });
 });

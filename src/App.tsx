@@ -19,6 +19,7 @@ export const App = () => {
   );
 
   const handleDrop = (column: number) => {
+    setDragging(false);
     setState((prev) => applyMove(prev, column));
   };
 
