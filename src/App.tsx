@@ -148,7 +148,7 @@ export const App = () => {
     },
     [updateDragPosition]
   );
-  const handleTouchEnd = useCallback(() => {
+  const finalizeDrag = useCallback(() => {
     if (snapColumn !== null) {
       handleDrop(snapColumn);
       return;
@@ -157,6 +157,25 @@ export const App = () => {
     setDragPosition(null);
     setSnapColumn(null);
   }, [handleDrop, snapColumn]);
+  const handlePointerStart = useCallback(
+    (point: { x: number; y: number }) => {
+      setDragging(true);
+      updateDragPosition(point);
+    },
+    [updateDragPosition]
+  );
+  const handlePointerMove = useCallback(
+    (point: { x: number; y: number }) => {
+      updateDragPosition(point);
+    },
+    [updateDragPosition]
+  );
+  const handlePointerEnd = useCallback(() => {
+    finalizeDrag();
+  }, [finalizeDrag]);
+  const handleTouchEnd = useCallback(() => {
+    finalizeDrag();
+  }, [finalizeDrag]);
   const handleNewGame = () => {
     if (isInProgress(state)) {
       const shouldReset = window.confirm(
@@ -186,6 +205,9 @@ export const App = () => {
           player={state.currentPlayer}
           setDragging={setDragging}
           hideToken={Boolean(dragPosition)}
+          onPointerStart={handlePointerStart}
+          onPointerMove={handlePointerMove}
+          onPointerEnd={handlePointerEnd}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

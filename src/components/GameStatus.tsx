@@ -20,18 +20,6 @@ export const GameStatus = ({
   if (isDraw) message = "It's a draw.";
 
   const celebrationEmojis = ["🎉", "🎊", "🥳", "✨", "🎈", "🎉", "🎊", "🥳"];
-  const overlay = (
-    <div className="status status--win status--overlay" aria-live="polite">
-      <span className="status__message">{winMessage}</span>
-      <div className="status__confetti" aria-hidden="true">
-        {celebrationEmojis.map((emoji, index) => (
-          <span key={`${emoji}-${index}`} className="status__confetti-item">
-            {emoji}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <div className="status-host">
@@ -44,7 +32,25 @@ export const GameStatus = ({
         </span>
       </div>
       {isWinner && typeof document !== "undefined"
-        ? createPortal(overlay, document.body)
+        ? createPortal(
+            <div
+              className={`status status--win status--overlay status--win-${winner?.toLowerCase()}`}
+              aria-live="polite"
+            >
+              <span className="status__message">{winMessage}</span>
+              <div className="status__confetti" aria-hidden="true">
+                {celebrationEmojis.map((emoji, index) => (
+                  <span
+                    key={`${emoji}-${index}`}
+                    className="status__confetti-item"
+                  >
+                    {emoji}
+                  </span>
+                ))}
+              </div>
+            </div>,
+            document.body
+          )
         : null}
     </div>
   );

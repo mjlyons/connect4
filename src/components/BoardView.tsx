@@ -23,7 +23,7 @@ export const BoardView = ({
       ref={boardRef}
       className="board"
       role="grid"
-      aria-label="Connect Four board"
+      aria-label="Connect Fjord board"
     >
       {board[0].map((_, colIndex) => (
         <div

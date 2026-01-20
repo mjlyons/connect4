@@ -6,7 +6,7 @@ import {
   startNewGame
 } from "./gameHelpers";
 
-test.describe("connect four games", () => {
+test.describe("connect fjord games", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
   });

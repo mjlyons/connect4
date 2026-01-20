@@ -51,6 +51,13 @@
     0 0 12px rgba(255, 215, 0, 0.6);
 }
 
+.status--win-red .status__message {
+  text-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.2),
+    0 0 12px rgba(255, 74, 74, 0.85),
+    0 0 2px rgba(255, 34, 34, 0.95);
+}
+
 .status__confetti {
   position: absolute;
   inset: 0;
@@ -123,7 +130,7 @@
     opacity: 1;
   }
   100% {
-    transform: translateY(-90px) scale(1.2);
+    transform: translateY(-160px) scale(1.35);
     opacity: 0;
   }
 }
