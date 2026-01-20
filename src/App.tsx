@@ -23,14 +23,9 @@ export const App = () => {
     const updateViewport = () => {
       const viewport = window.visualViewport;
       const height = viewport?.height ?? window.innerHeight;
-      const width = viewport?.width ?? window.innerWidth;
       document.documentElement.style.setProperty(
         "--viewport-height",
         `${height}px`
-      );
-      document.documentElement.style.setProperty(
-        "--viewport-width",
-        `${width}px`
       );
     };
 

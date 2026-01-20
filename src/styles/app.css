@@ -12,12 +12,10 @@
 body {
   margin: 0;
   height: var(--viewport-height, 100svh);
-  width: var(--viewport-width, 100vw);
 }
 
 #root {
   height: var(--viewport-height, 100svh);
-  width: var(--viewport-width, 100vw);
 }
 
 .app {
