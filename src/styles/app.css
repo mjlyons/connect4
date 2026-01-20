@@ -165,18 +165,27 @@ body {
   border-radius: 50%;
   background: #f2f2f2;
   border: 3px solid rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
-.cell--drop {
+.cell--occupied::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  border-radius: 50%;
+  box-shadow: inset -6px -8px 10px rgba(0, 0, 0, 0.2);
+}
+
+.cell--drop::after {
   animation: drop 0.35s ease-in;
   will-change: transform;
 }
 
-.cell--red {
+.cell--red::after {
   background: radial-gradient(circle at 30% 30%, #ffb3b3, #ff3b3b);
 }
 
-.cell--yellow {
+.cell--yellow::after {
   background: radial-gradient(circle at 30% 30%, #fff4b3, #ffc107);
 }
 

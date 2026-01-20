@@ -9,7 +9,13 @@ type CellViewProps = {
 
 export const CellView = ({ value, animate, dropRows }: CellViewProps) => {
   const colorClass = value ? `cell--${value.toLowerCase()}` : "";
-  const className = ["cell", colorClass, animate ? "cell--drop" : ""]
+  const occupiedClass = value ? "cell--occupied" : "";
+  const className = [
+    "cell",
+    occupiedClass,
+    colorClass,
+    animate ? "cell--drop" : ""
+  ]
     .filter(Boolean)
     .join(" ");
   const style = animate
