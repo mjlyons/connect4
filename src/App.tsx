@@ -20,13 +20,34 @@ export const App = () => {
   const [snapColumn, setSnapColumn] = useState<number | null>(null);
 
   useEffect(() => {
+    let rafId: number | null = null;
+
     const updateViewport = () => {
-      const viewport = window.visualViewport;
-      const height = viewport?.height ?? window.innerHeight;
-      document.documentElement.style.setProperty(
-        "--viewport-height",
-        `${height}px`
-      );
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      rafId = window.requestAnimationFrame(() => {
+        const viewport = window.visualViewport;
+        const height = viewport?.height ?? window.innerHeight;
+        document.documentElement.style.setProperty(
+          "--viewport-height",
+          `${height}px`
+        );
+
+        const board = boardRef.current;
+        const frame = board?.parentElement;
+        if (!board || !frame) return;
+        const { width, height: frameHeight } = frame.getBoundingClientRect();
+        const boardSize = Math.max(0, Math.min(width, frameHeight));
+        const style = window.getComputedStyle(board);
+        const gap = parseFloat(style.gap) || 0;
+        const padding = parseFloat(style.paddingLeft) || 0;
+        const cellSize = (boardSize - padding * 2 - gap * 6) / 7;
+        board.style.setProperty("--board-size", `${boardSize}px`);
+        if (cellSize > 0) {
+          board.style.setProperty("--cell-size", `${cellSize}px`);
+        }
+      });
     };
 
     updateViewport();
@@ -35,6 +56,9 @@ export const App = () => {
     window.visualViewport?.addEventListener("resize", updateViewport);
 
     return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
       window.removeEventListener("resize", updateViewport);
       window.removeEventListener("orientationchange", updateViewport);
       window.visualViewport?.removeEventListener("resize", updateViewport);
