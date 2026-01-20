@@ -1,7 +1,29 @@
+.status-host {
+  position: relative;
+}
+
 .status {
   position: relative;
   display: inline-flex;
   align-items: center;
+}
+
+.status--overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1500;
+}
+
+.status--overlay .status__message {
+  text-align: center;
+}
+
+.status--placeholder {
+  visibility: hidden;
 }
 
 .status__message {

@@ -6,3 +6,13 @@ if (!document.elementFromPoint) {
     configurable: true
   });
 }
+
+if (!globalThis.ResizeObserver) {
+  class ResizeObserverMock {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+
+  globalThis.ResizeObserver = ResizeObserverMock;
+}

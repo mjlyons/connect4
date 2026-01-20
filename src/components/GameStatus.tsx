@@ -12,27 +12,34 @@ export const GameStatus = ({
   currentPlayer
 }: GameStatusProps) => {
   const isWinner = Boolean(winner);
-  let message = `${currentPlayer}'s turn`;
-  if (winner) message = `${winner} Wins!`;
+  const turnMessage = `${currentPlayer}'s turn`;
+  const winMessage = winner ? `${winner} Wins!` : "";
+  let message = turnMessage;
+  if (winner) message = winMessage;
   if (isDraw) message = "It's a draw.";
 
   const celebrationEmojis = ["🎉", "🎊", "🥳", "✨", "🎈", "🎉", "🎊", "🥳"];
 
   return (
-    <div
-      className={`status${isWinner ? " status--win" : ""}`}
-      data-testid="game-status"
-    >
-      <span className="status__message" data-testid="game-status-message">
-        {message}
-      </span>
+    <div className="status-host">
+      <div
+        className={`status${isWinner ? " status--placeholder" : ""}`}
+        data-testid="game-status"
+      >
+        <span className="status__message" data-testid="game-status-message">
+          {message}
+        </span>
+      </div>
       {isWinner && (
-        <div className="status__confetti" aria-hidden="true">
-          {celebrationEmojis.map((emoji, index) => (
-            <span key={`${emoji}-${index}`} className="status__confetti-item">
-              {emoji}
-            </span>
-          ))}
+        <div className="status status--win status--overlay" aria-live="polite">
+          <span className="status__message">{winMessage}</span>
+          <div className="status__confetti" aria-hidden="true">
+            {celebrationEmojis.map((emoji, index) => (
+              <span key={`${emoji}-${index}`} className="status__confetti-item">
+                {emoji}
+              </span>
+            ))}
+          </div>
         </div>
       )}
     </div>

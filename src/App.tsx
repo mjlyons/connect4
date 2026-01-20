@@ -12,6 +12,7 @@ export const App = () => {
   const { state, setState, reset, undo, redo, canUndo, canRedo } =
     useStoredGame();
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const layoutRaf = useRef<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const [dragPosition, setDragPosition] = useState<{
     x: number;
@@ -19,51 +20,67 @@ export const App = () => {
   } | null>(null);
   const [snapColumn, setSnapColumn] = useState<number | null>(null);
 
-  useEffect(() => {
-    let rafId: number | null = null;
+  const updateLayout = useCallback(() => {
+    if (layoutRaf.current !== null) {
+      window.cancelAnimationFrame(layoutRaf.current);
+    }
+    layoutRaf.current = window.requestAnimationFrame(() => {
+      const viewport = window.visualViewport;
+      const height = viewport?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty(
+        "--viewport-height",
+        `${height}px`
+      );
 
-    const updateViewport = () => {
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
+      const board = boardRef.current;
+      const frame = board?.parentElement;
+      if (!board || !frame) return;
+      const { width, height: frameHeight } = frame.getBoundingClientRect();
+      const boardSize = Math.max(0, Math.min(width, frameHeight));
+      const style = window.getComputedStyle(board);
+      const gap = parseFloat(style.gap) || 0;
+      const paddingLeft = parseFloat(style.paddingLeft) || 0;
+      const paddingRight = parseFloat(style.paddingRight) || 0;
+      const cellSize = (boardSize - paddingLeft - paddingRight - gap * 6) / 7;
+      board.style.setProperty("--board-size", `${boardSize}px`);
+      if (cellSize > 0) {
+        board.style.setProperty("--cell-size", `${cellSize}px`);
       }
-      rafId = window.requestAnimationFrame(() => {
-        const viewport = window.visualViewport;
-        const height = viewport?.height ?? window.innerHeight;
-        document.documentElement.style.setProperty(
-          "--viewport-height",
-          `${height}px`
-        );
+    });
+  }, []);
 
-        const board = boardRef.current;
-        const frame = board?.parentElement;
-        if (!board || !frame) return;
-        const { width, height: frameHeight } = frame.getBoundingClientRect();
-        const boardSize = Math.max(0, Math.min(width, frameHeight));
-        const style = window.getComputedStyle(board);
-        const gap = parseFloat(style.gap) || 0;
-        const padding = parseFloat(style.paddingLeft) || 0;
-        const cellSize = (boardSize - padding * 2 - gap * 6) / 7;
-        board.style.setProperty("--board-size", `${boardSize}px`);
-        if (cellSize > 0) {
-          board.style.setProperty("--cell-size", `${cellSize}px`);
-        }
-      });
+  useEffect(() => {
+    let observer: ResizeObserver | null = null;
+    let observerRaf: number | null = null;
+
+    const attachObserver = () => {
+      if (observer) return;
+      const frame = boardRef.current?.parentElement;
+      if (!frame) return;
+      observer = new ResizeObserver(() => updateLayout());
+      observer.observe(frame);
     };
 
-    updateViewport();
-    window.addEventListener("resize", updateViewport);
-    window.addEventListener("orientationchange", updateViewport);
-    window.visualViewport?.addEventListener("resize", updateViewport);
+    updateLayout();
+    attachObserver();
+    observerRaf = window.requestAnimationFrame(attachObserver);
+    window.addEventListener("resize", updateLayout);
+    window.addEventListener("orientationchange", updateLayout);
+    window.visualViewport?.addEventListener("resize", updateLayout);
 
     return () => {
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
+      if (layoutRaf.current !== null) {
+        window.cancelAnimationFrame(layoutRaf.current);
       }
-      window.removeEventListener("resize", updateViewport);
-      window.removeEventListener("orientationchange", updateViewport);
-      window.visualViewport?.removeEventListener("resize", updateViewport);
+      if (observerRaf !== null) {
+        window.cancelAnimationFrame(observerRaf);
+      }
+      observer?.disconnect();
+      window.removeEventListener("resize", updateLayout);
+      window.removeEventListener("orientationchange", updateLayout);
+      window.visualViewport?.removeEventListener("resize", updateLayout);
     };
-  }, []);
+  }, [updateLayout]);
   const handleDrop = useCallback(
     (column: number) => {
       setDragging(false);
