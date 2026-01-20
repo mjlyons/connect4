@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { Player } from "../model/board";
 
 type GameStatusProps = {
@@ -30,21 +31,27 @@ export const GameStatus = ({
           {message}
         </span>
       </div>
-      {isWinner && (
-        <div
-          className={`status status--win status--overlay status--win-${winner?.toLowerCase()}`}
-          aria-live="polite"
-        >
-          <span className="status__message">{winMessage}</span>
-          <div className="status__confetti" aria-hidden="true">
-            {celebrationEmojis.map((emoji, index) => (
-              <span key={`${emoji}-${index}`} className="status__confetti-item">
-                {emoji}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {isWinner && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className={`status status--win status--overlay status--win-${winner?.toLowerCase()}`}
+              aria-live="polite"
+            >
+              <span className="status__message">{winMessage}</span>
+              <div className="status__confetti" aria-hidden="true">
+                {celebrationEmojis.map((emoji, index) => (
+                  <span
+                    key={`${emoji}-${index}`}
+                    className="status__confetti-item"
+                  >
+                    {emoji}
+                  </span>
+                ))}
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </div>
   );
 };
