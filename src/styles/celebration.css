@@ -60,7 +60,7 @@
 .status__confetti-item {
   position: absolute;
   bottom: -0.5rem;
-  font-size: 1.6rem;
+  font-size: 3.2rem;
   animation: confetti-pop 1.6s ease-out infinite;
 }
 

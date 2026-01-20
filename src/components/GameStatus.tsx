@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { Player } from "../model/board";
 
 type GameStatusProps = {
@@ -19,6 +20,18 @@ export const GameStatus = ({
   if (isDraw) message = "It's a draw.";
 
   const celebrationEmojis = ["🎉", "🎊", "🥳", "✨", "🎈", "🎉", "🎊", "🥳"];
+  const overlay = (
+    <div className="status status--win status--overlay" aria-live="polite">
+      <span className="status__message">{winMessage}</span>
+      <div className="status__confetti" aria-hidden="true">
+        {celebrationEmojis.map((emoji, index) => (
+          <span key={`${emoji}-${index}`} className="status__confetti-item">
+            {emoji}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="status-host">
@@ -30,18 +43,9 @@ export const GameStatus = ({
           {message}
         </span>
       </div>
-      {isWinner && (
-        <div className="status status--win status--overlay" aria-live="polite">
-          <span className="status__message">{winMessage}</span>
-          <div className="status__confetti" aria-hidden="true">
-            {celebrationEmojis.map((emoji, index) => (
-              <span key={`${emoji}-${index}`} className="status__confetti-item">
-                {emoji}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {isWinner && typeof document !== "undefined"
+        ? createPortal(overlay, document.body)
+        : null}
     </div>
   );
 };
