@@ -9,7 +9,7 @@ export const touchDropInColumn = async (page: Page, column: number) => {
   const tokenBox = await token.boundingBox();
   const columnBox = await page.getByTestId(`column-${column}`).boundingBox();
   const boardBox = await page
-    .getByRole("grid", { name: /connect four board/i })
+    .getByRole("grid", { name: /connect fjord board/i })
     .boundingBox();
   if (!tokenBox || !columnBox || !boardBox) {
     throw new Error("Missing bounding boxes for touch drop");

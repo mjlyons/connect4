@@ -16,7 +16,7 @@ describe("App touch play", () => {
 
     expect(container.querySelector(".dragging-token")).not.toBeNull();
 
-    const board = screen.getByRole("grid", { name: /connect four board/i });
+    const board = screen.getByRole("grid", { name: /connect fjord board/i });
     vi.spyOn(board, "getBoundingClientRect").mockReturnValue({
       left: 0,
       right: 700,
