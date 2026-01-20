@@ -14,7 +14,7 @@ export const AppHeader = ({
   canRedo
 }: AppHeaderProps) => (
   <header className="app__header">
-    <h1>Connect Four</h1>
+    <h1>Connect Fjord</h1>
     <div className="app__controls">
       <button
         className="app__button app__button--secondary"
