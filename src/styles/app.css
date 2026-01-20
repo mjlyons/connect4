@@ -11,11 +11,13 @@
 
 body {
   margin: 0;
-  height: 100svh;
+  height: var(--viewport-height, 100svh);
+  width: var(--viewport-width, 100vw);
 }
 
 #root {
-  height: 100svh;
+  height: var(--viewport-height, 100svh);
+  width: var(--viewport-width, 100vw);
 }
 
 .app {

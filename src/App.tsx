@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppHeader } from "./components/AppHeader";
 import { BoardView } from "./components/BoardView";
 import { GameStatus } from "./components/GameStatus";
@@ -18,6 +18,33 @@ export const App = () => {
     y: number;
   } | null>(null);
   const [snapColumn, setSnapColumn] = useState<number | null>(null);
+
+  useEffect(() => {
+    const updateViewport = () => {
+      const viewport = window.visualViewport;
+      const height = viewport?.height ?? window.innerHeight;
+      const width = viewport?.width ?? window.innerWidth;
+      document.documentElement.style.setProperty(
+        "--viewport-height",
+        `${height}px`
+      );
+      document.documentElement.style.setProperty(
+        "--viewport-width",
+        `${width}px`
+      );
+    };
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+    window.addEventListener("orientationchange", updateViewport);
+    window.visualViewport?.addEventListener("resize", updateViewport);
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+      window.removeEventListener("orientationchange", updateViewport);
+      window.visualViewport?.removeEventListener("resize", updateViewport);
+    };
+  }, []);
   const handleDrop = useCallback(
     (column: number) => {
       setDragging(false);
