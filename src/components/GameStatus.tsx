@@ -31,7 +31,10 @@ export const GameStatus = ({
         </span>
       </div>
       {isWinner && (
-        <div className="status status--win status--overlay" aria-live="polite">
+        <div
+          className={`status status--win status--overlay status--win-${winner?.toLowerCase()}`}
+          aria-live="polite"
+        >
           <span className="status__message">{winMessage}</span>
           <div className="status__confetti" aria-hidden="true">
             {celebrationEmojis.map((emoji, index) => (
